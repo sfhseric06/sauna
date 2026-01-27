@@ -1,0 +1,68 @@
+{
+  "_comment": "Secondary Shelly Pro 2 Configuration - shellypro2-0cb815fc96dc",
+  "_description": "SAFETY DEVICE - This file documents the complete firmware configuration required for the Secondary Shelly. The deploy script applies these settings via RPC.",
+  
+  "device": {
+    "name": "Sauna Safety Controller",
+    "id": "shellypro2-0cb815fc96dc"
+  },
+  
+  "inputs": {
+    "input:0": {
+      "name": "SW1 Secondary Sense",
+      "type": "switch",
+      "enable": true,
+      "_comment": "Senses secondary contactor output - HIGH means BOTH contactors ON"
+    },
+    "input:1": {
+      "name": "SW2 Primary Sense",
+      "type": "switch",
+      "enable": true,
+      "_comment": "Senses primary contactor output - HIGH means Primary is ON"
+    }
+  },
+  
+  "switches": {
+    "switch:0": {
+      "name": "Safety Contactor",
+      "in_mode": "detached",
+      "initial_state": "off",
+      "auto_on": false,
+      "auto_off": true,
+      "auto_off_delay": 3660,
+      "_comment": "CRITICAL SAFETY: Must default OFF. Auto-off at 61 min is firmware backup."
+    }
+  },
+  
+  "scripts": {
+    "script:1": {
+      "name": "Secondary Safety Logic",
+      "enable": true,
+      "file": "script.js",
+      "_comment": "Safety script with independent timer and weld detection"
+    }
+  },
+  
+  "safety_features": {
+    "initial_state_off": {
+      "description": "Relay defaults to OFF on power loss",
+      "critical": true
+    },
+    "firmware_auto_off": {
+      "description": "Firmware cuts power after 61 minutes regardless of script",
+      "delay_seconds": 3660,
+      "critical": true
+    },
+    "script_timer": {
+      "description": "Script enforces 1-hour max runtime",
+      "delay_seconds": 3600
+    },
+    "weld_detection": {
+      "description": "Script detects welded contactor if SW2 stays HIGH > 65 min",
+      "delay_seconds": 3900
+    },
+    "feedback_verification": {
+      "description": "Script verifies SW1 goes HIGH within 1 second of engaging relay"
+    }
+  }
+}

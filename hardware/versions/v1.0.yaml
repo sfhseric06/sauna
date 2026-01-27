@@ -1,0 +1,188 @@
+# =============================================================================
+# SAUNA HARDWARE CONFIGURATION - VERSION 1.0
+# =============================================================================
+# This file defines all hardware-specific parameters for this revision.
+# All firmware, scripts, and Home Assistant configs should reference this file
+# (or be generated from it) to ensure consistency.
+#
+# SCHEMATIC: schematic-v1.0.pdf (same directory)
+# =============================================================================
+
+version: "1.0"
+revision_date: "2026-01-26"
+description: "Initial documented hardware configuration"
+
+# =============================================================================
+# DEVICES
+# =============================================================================
+# Physical Shelly devices and their network identifiers.
+# This is the SINGLE SOURCE OF TRUTH - devices.sh reads from this file.
+
+devices:
+  # ---------------------------------------------------------------------------
+  # SAUNA CORE DEVICES
+  # ---------------------------------------------------------------------------
+  
+  primary_controller:
+    model: "Shelly Pro 2"
+    device_id: "shellypro2-0cb815fcaff4"
+    hostname: "shellypro2-0cb815fcaff4.local"
+    mac_address: "0C:B8:15:FC:AF:F4"
+    role: "Main control logic, user interface, 1-hour timer"
+    
+  secondary_controller:
+    model: "Shelly Pro 2"
+    device_id: "shellypro2-0cb815fc96dc"
+    hostname: "shellypro2-0cb815fc96dc.local"
+    mac_address: "0C:B8:15:FC:96:DC"
+    role: "Safety backup, contactor feedback, weld detection"
+    
+  led_strip:
+    model: "Shelly RGBW2"
+    device_id: "shellyrgbw2-30c922571550"
+    hostname: "shellyrgbw2-30c922571550.local"
+    mac_address: "30:C9:22:57:15:50"
+    role: "Sauna interior LED strip lighting"
+    
+  blu_rc4:
+    model: "Shelly BLU RC Button 4"
+    mac_address: "7C:C6:B6:9E:A4:88"
+    role: "Wireless Bluetooth remote control"
+    connection: "Bluetooth-only, pairs with primary_controller"
+    
+  # ---------------------------------------------------------------------------
+  # AUXILIARY DEVICES
+  # ---------------------------------------------------------------------------
+  
+  hvac_controller:
+    model: "Shelly Plus 2PM"
+    device_id: "shellyplus2pm-3c8a1fe851a4"
+    hostname: "shellyplus2pm-3c8a1fe851a4.local"
+    mac_address: "3C:8A:1F:E8:51:A4"
+    role: "HVAC control"
+    notes: "See schematic for wiring details"
+    
+  exterior_sensor:
+    model: "Shelly Plus 2PM"
+    device_id: "shellyplus2pm-3c8a1fe85f54"
+    hostname: "shellyplus2pm-3c8a1fe85f54.local"
+    mac_address: "3C:8A:1F:E8:5F:54"
+    role: "Exterior light control, indoor/outdoor temperature monitoring"
+    ha_entity_prefix: "sensor.shellyplus2pm_3c8a1fe85f54"
+
+# =============================================================================
+# PRIMARY CONTROLLER PIN MAPPING
+# =============================================================================
+
+primary_controller:
+  inputs:
+    input_0:
+      name: "RC Button"
+      type: "button"  # momentary
+      connected_to: "Physical RC button (momentary switch)"
+      
+  outputs:
+    relay_0:
+      name: "Main Contactor"
+      controls: "Primary power contactor coil"
+      default_state: "off"
+      safety_critical: true
+      
+    relay_1:
+      name: "Indicator Light"
+      controls: "Visual status indicator"
+      default_state: "off"
+      safety_critical: false
+      
+  virtual_components:
+    button_200:
+      name: "HA Toggle Button"
+      purpose: "REST API trigger for Home Assistant"
+      
+  bthome:
+    blu_button_1:
+      component_id: "bthomedevice:200"
+      button_index: 0
+      purpose: "Wireless Bluetooth toggle"
+
+# =============================================================================
+# SECONDARY CONTROLLER PIN MAPPING
+# =============================================================================
+
+secondary_controller:
+  inputs:
+    input_0:
+      name: "SW1 - Secondary Contactor Sense"
+      type: "switch"
+      connected_to: "Secondary contactor output (feedback)"
+      signal_meaning:
+        high: "Both contactors are ON (heater has power)"
+        low: "Secondary contactor is OFF"
+        
+    input_1:
+      name: "SW2 - Primary Contactor Sense"  
+      type: "switch"
+      connected_to: "Primary contactor output"
+      signal_meaning:
+        high: "Primary contactor is ON"
+        low: "Primary contactor is OFF"
+        
+  outputs:
+    relay_0:
+      name: "Safety Contactor"
+      controls: "Secondary power contactor coil (in series with main)"
+      default_state: "off"
+      safety_critical: true
+      auto_off_seconds: 3660  # 61 minutes - firmware backup
+
+# =============================================================================
+# TEMPERATURE SENSORS
+# =============================================================================
+
+temperature_sensors:
+  outdoor:
+    entity_id: "sensor.shellyplus2pm_3c8a1fe85f54_temperature"
+    location: "Outside sauna enclosure"
+    
+  indoor:
+    entity_id: "sensor.shellyplus2pm_3c8a1fe85f54_temperature_2"
+    location: "Inside sauna (measures sauna temperature)"
+    session_trigger_threshold_f: 90
+
+# =============================================================================
+# MQTT TOPICS
+# =============================================================================
+
+mqtt:
+  topic_prefix: "sauna"
+  topics:
+    state: "sauna/shellypro2-0cb815fcaff4/state"
+    timer: "sauna/shellypro2-0cb815fcaff4/timer_raw"
+
+# =============================================================================
+# SAFETY PARAMETERS
+# =============================================================================
+
+safety:
+  max_session_duration_seconds: 3600      # 1 hour - script enforced
+  firmware_backup_cutoff_seconds: 3660    # 61 minutes - firmware enforced
+  weld_detection_threshold_seconds: 3900  # 65 minutes
+  contactor_feedback_timeout_ms: 1000     # 1 second to verify engagement
+  
+  design_principles:
+    - "Both contactors in series - either can cut power independently"
+    - "All relays default OFF on power loss"
+    - "Independent timers on both controllers"
+    - "Firmware auto-off as backup to script timers"
+
+# =============================================================================
+# POWER CIRCUIT
+# =============================================================================
+
+power_circuit:
+  voltage: "240V"  # Typical for sauna heater
+  contactor_configuration: "series"
+  description: |
+    Mains power flows through Main Contactor (Primary Shelly Relay 0),
+    then through Safety Contactor (Secondary Shelly Relay 0),
+    then to the sauna heater. Both must be ON for heater to receive power.

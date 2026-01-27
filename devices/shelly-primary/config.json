@@ -1,0 +1,72 @@
+{
+  "_comment": "Primary Shelly Pro 2 Configuration - shellypro2-0cb815fcaff4",
+  "_description": "This file documents the complete firmware configuration required for the Primary Shelly. The deploy script applies these settings via RPC.",
+  
+  "device": {
+    "name": "Sauna Primary Controller",
+    "id": "shellypro2-0cb815fcaff4"
+  },
+  
+  "inputs": {
+    "input:0": {
+      "name": "RC Button",
+      "type": "button",
+      "enable": true,
+      "_comment": "Physical momentary button for manual control"
+    }
+  },
+  
+  "switches": {
+    "switch:0": {
+      "name": "Main Contactor",
+      "in_mode": "detached",
+      "initial_state": "off",
+      "auto_on": false,
+      "auto_off": false,
+      "_comment": "CRITICAL: Must default OFF. Controls main power contactor."
+    },
+    "switch:1": {
+      "name": "Indicator Light", 
+      "in_mode": "detached",
+      "initial_state": "off",
+      "auto_on": false,
+      "auto_off": false,
+      "_comment": "Visual indicator light, mirrors main contactor state"
+    }
+  },
+  
+  "virtual": {
+    "button:200": {
+      "name": "HA Toggle Button",
+      "_comment": "Virtual button for Home Assistant REST API integration"
+    }
+  },
+  
+  "scripts": {
+    "script:1": {
+      "name": "Primary Control Logic",
+      "enable": true,
+      "file": "script.js",
+      "_comment": "Main control script with 1-hour safety timer"
+    }
+  },
+  
+  "mqtt": {
+    "enable": true,
+    "topics": {
+      "state": "sauna/shellypro2-0cb815fcaff4/state",
+      "timer": "sauna/shellypro2-0cb815fcaff4/timer_raw"
+    },
+    "_comment": "MQTT broker must be configured separately"
+  },
+  
+  "bthome": {
+    "enabled": true,
+    "devices": {
+      "bthomedevice:200": {
+        "name": "BLU Button 1",
+        "_comment": "Paired Shelly BLU Button for wireless control"
+      }
+    }
+  }
+}

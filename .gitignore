@@ -1,0 +1,30 @@
+# Backups (contain device-specific data, possibly credentials)
+backups/
+
+# Extracted HA backups (temporary analysis)
+artifacts/
+ha-backup-extract/
+*-decrypted.tar*
+
+# Temp files
+*.tmp
+*.bak
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor files
+*.swp
+*.swo
+.idea/
+.vscode/
+
+# Secrets (if any exported configs contain credentials)
+*-secrets.json
+credentials.json
+
+# Node modules (if adding any tooling later)
+node_modules/
+logs/
