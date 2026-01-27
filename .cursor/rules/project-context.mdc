@@ -1,0 +1,79 @@
+---
+description: Sauna control system project context
+globs:
+alwaysApply: true
+---
+
+# Sauna Control System - Project Context
+
+## Overview
+
+This is a safety-critical control system for an electric sauna heater with:
+- Two Shelly Pro 2 devices (Primary + Secondary) controlling contactors in series
+- Either device can independently cut power (defense in depth)
+- 1-hour maximum runtime enforced by software timers
+- Firmware auto-off as backup (61 min on secondary)
+
+## Repository Structure
+
+**This repo (`sauna`)** contains:
+- Hardware configuration (`hardware/versions/v1.0.yaml` - source of truth)
+- Shelly JavaScript scripts (`devices/shelly-*/script.js`)
+- Deployment scripts (`scripts/deploy-*.sh`)
+- API documentation (`docs/api.md`)
+- Test suite (`tests/`)
+
+**Companion repo (`homeassistant_sauna_config`)** contains:
+- Home Assistant integration (packages, dashboards)
+- Deployment to HA (`scripts/deploy.sh`)
+- Located at: `../homeassistant_sauna_config/`
+
+## Key Files
+
+- `hardware/versions/v1.0.yaml` - Single source of truth for device IDs, MACs, pin mappings
+- `hardware/devices.sh` - Parses YAML into shell variables for scripts
+- `TODO.md` - Current tasks and known issues (CHECK THIS FIRST)
+- `devices/shelly-primary/script.js` - Main control script
+- `devices/shelly-secondary/script.js` - Safety backup script (INCOMPLETE - see TODO)
+
+## Current Hardware (v1.0)
+
+| Device | ID | Role |
+|--------|-----|------|
+| Primary Shelly | shellypro2-0cb815fcaff4 | Main control, 1-hour timer |
+| Secondary Shelly | shellypro2-0cb815fc96dc | Safety backup, weld detection |
+| Temp Sensor | shellyplus2pm-3c8a1fe85f54 | Indoor/outdoor temperature |
+| LED Strip | shellyplusrgbwpm-30c922571550 | Interior lighting |
+| HVAC | shellyplus2pm-3c8a1fe851a4 | HVAC control |
+| BLU RC4 | 7C:C6:B6:9E:A4:88 | Bluetooth remote |
+
+## Critical Safety Note
+
+**The secondary script (`devices/shelly-secondary/script.js`) is INCOMPLETE.**
+It cuts off at line 71. This is documented in `TODO.md` as the highest priority issue.
+
+Current safety layers:
+1. Primary script timer (60 min) ✅
+2. Secondary script timer (60 min) ❌ INCOMPLETE
+3. Firmware auto-off (61 min) ✅
+
+## Git Remotes
+
+- sauna: git@github.com:sfhseric06/sauna.git
+- homeassistant_sauna_config: git@github.com:sfhseric06/homeassistant_sauna_config.git
+
+## Common Commands
+
+```bash
+# Deploy to primary Shelly
+./scripts/deploy-primary.sh
+
+# Check device health
+./scripts/check-health.sh
+
+# Run tests
+./tests/test-deployment.sh all
+
+# Discover devices on network
+./scripts/discover-devices.sh
+```
