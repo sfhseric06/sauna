@@ -1,5 +1,42 @@
 # Sauna Project - TODO
 
+## CRITICAL: Safety Script Gaps
+
+**Priority: HIGH - Complete before relying on system**
+
+### Secondary Script is INCOMPLETE
+
+The file `devices/shelly-secondary/script.js` cuts off at line 71 mid-function. Missing:
+
+- [ ] **Independent 1-hour timer** - Start when SW2 (Primary sense) goes HIGH
+- [ ] **Weld detection logic** - If SW2 stays HIGH > 65 min after safety relay turns OFF, primary contactor is welded
+- [ ] **Complete feedback verification** - Verify SW1 goes HIGH within 1 second of engaging relay
+- [ ] **State reporting** - Publish safety status to MQTT for HA monitoring
+
+**Current safety coverage without complete secondary script:**
+```
+Primary Timer (script) → 60 min
+        ↓ (if fails)
+Secondary Timer (script) → BROKEN ❌
+        ↓ (if fails)  
+Firmware Auto-Off → 61 min ✅ (last resort)
+```
+
+### Primary Script Improvements
+
+- [ ] **Add retry logic to `stopAndTurnOff()`** - If RPC fails, currently no retry; state stuck "ON"
+- [ ] **Add watchdog heartbeat** - Periodic "I'm alive" to MQTT for crash detection
+
+### Verify Firmware Safety Settings
+
+Run on live device to confirm firmware backup is configured:
+```bash
+curl "http://shellypro2-0cb815fc96dc.local/rpc/Switch.GetConfig?id=0"
+```
+Verify: `auto_off: true`, `auto_off_delay: 3660`
+
+---
+
 ## Home Assistant Integration Issues
 
 See detailed analysis in: `../homeassistant_sauna_config/TODO.md`
@@ -56,5 +93,5 @@ See detailed analysis in: `../homeassistant_sauna_config/TODO.md`
 
 ## Git Commits
 
-- [ ] Initial commit for `sauna` repo (not yet pushed)
-- [ ] Initial commit for `homeassistant_sauna_config` repo (not yet pushed)
+- [x] Initial commit for `sauna` repo ✅ Pushed
+- [x] Initial commit for `homeassistant_sauna_config` repo ✅ Pushed
