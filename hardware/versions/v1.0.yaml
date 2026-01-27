@@ -38,11 +38,12 @@ devices:
     role: "Safety backup, contactor feedback, weld detection"
     
   led_strip:
-    model: "Shelly RGBW2"
-    device_id: "shellyrgbw2-30c922571550"
-    hostname: "shellyrgbw2-30c922571550.local"
+    model: "Shelly Plus RGBW PM"
+    device_id: "shellyplusrgbwpm-30c922571550"
+    hostname: "shellyplusrgbwpm-30c922571550.local"
     mac_address: "30:C9:22:57:15:50"
     role: "Sauna interior LED strip lighting"
+    ha_entity: "light.shellyplusrgbwpm_30c922571550_light_0"
     
   blu_rc4:
     model: "Shelly BLU RC Button 4"

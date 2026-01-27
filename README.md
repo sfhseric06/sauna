@@ -110,25 +110,46 @@ Use the [API documentation](docs/api.md) to integrate with:
 ```
 sauna/
 ├── README.md                     # This file
-├── docs/
-│   ├── api.md                    # API reference (MQTT, REST)
-│   ├── hardware/
-│   │   ├── README.md             # Wiring overview
-│   │   └── sauna_electrical_hardware_schematic.pdf
-│   ├── safety/
-│   │   └── README.md             # Safety design philosophy
-│   └── troubleshooting.md
+├── TODO.md                       # Project tasks and known issues
+├── hardware/
+│   ├── HARDWARE_VERSION          # Current active version (e.g., "1.0")
+│   ├── devices.sh                # Shell manifest (parses YAML)
+│   ├── README.md                 # Hardware versioning guide
+│   └── versions/
+│       ├── v1.0.yaml             # Device IDs, pin mappings, safety params
+│       └── schematic-v1.0.pdf    # Wiring schematic
 ├── devices/
 │   ├── shelly-primary/
 │   │   ├── README.md             # Deployment & settings guide
+│   │   ├── config.json           # Expected firmware configuration
 │   │   └── script.js             # Primary control script
 │   └── shelly-secondary/
 │       ├── README.md             # Deployment & settings guide
-│       └── script.js             # Secondary safety script
-└── scripts/
-    ├── deploy-primary.sh         # Script deployment helper
-    ├── deploy-secondary.sh
-    └── backup-settings.sh        # Backup Shelly settings
+│       ├── config.json           # Expected firmware configuration
+│       └── script.js             # Secondary safety script (INCOMPLETE)
+├── scripts/
+│   ├── deploy-primary.sh         # Full deployment (script + firmware settings)
+│   ├── deploy-secondary.sh       # Full deployment (script + firmware settings)
+│   ├── backup-settings.sh        # Backup device settings
+│   ├── discover-devices.sh       # Find devices on network
+│   ├── dump-shelly-config.sh     # Dump live device config
+│   ├── diagnose-device.sh        # Device diagnostics
+│   ├── diagnose-all.sh           # All devices diagnostics
+│   ├── check-health.sh           # Quick health check
+│   ├── monitor-wifi.sh           # WiFi signal monitoring
+│   └── network-debug.sh          # Network troubleshooting
+├── tests/
+│   ├── README.md                 # Test documentation
+│   ├── lint-scripts.sh           # Local JS linting
+│   ├── test-deployment.sh        # Deployment verification
+│   └── validate-config.sh        # Config validation
+└── docs/
+    ├── api.md                    # API reference (MQTT, REST)
+    ├── hardware/
+    │   └── README.md             # Legacy wiring overview
+    ├── safety/
+    │   └── README.md             # Safety design philosophy
+    └── troubleshooting.md
 ```
 
 ## Control Interfaces
@@ -155,7 +176,7 @@ This sauna system can be controlled by any frontend that supports MQTT or REST:
 
 | Frontend | Integration Method | Notes |
 |----------|-------------------|-------|
-| Home Assistant | MQTT sensors + REST commands | See `homeassistant-config` repo |
+| Home Assistant | MQTT sensors + REST commands | See `homeassistant_sauna_config` repo |
 | Node-RED | MQTT nodes + HTTP request | Full flexibility |
 | Custom Web App | REST API | Direct HTTP calls |
 | iOS Shortcuts | REST API | Quick toggles |

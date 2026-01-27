@@ -89,21 +89,13 @@ Response:
 
 ### Get Remaining Time
 
-```http
-GET http://shellypro2-0cb815fcaff4.local/rpc/KVS.Get?key=sauna_remaining_time
+Subscribe to MQTT for real-time timer updates:
+
+```bash
+mosquitto_sub -h YOUR_BROKER -t "sauna/shellypro2-0cb815fcaff4/timer_raw"
 ```
 
-**Note:** The primary script may not use KVS for time (it uses MQTT). Check script implementation.
-
-### Set Session Duration
-
-Store a custom duration (in seconds) that the script reads on next session start:
-
-```http
-POST http://shellypro2-0cb815fcaff4.local/rpc/KVS.Set?key=sauna_duration&value=1800
-```
-
-(Sets 30-minute session. Script must be modified to read this value.)
+**Note:** The script publishes remaining time to MQTT every 30 seconds. KVS is NOT used.
 
 ### Direct Relay Control (Emergency/Testing)
 
