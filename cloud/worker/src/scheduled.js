@@ -9,7 +9,7 @@
 
 import { shellyCloudDeviceStatus } from './shelly.js';
 import { writeMetrics } from './metrics.js';
-import { computeRemainingS, evaluateSession } from './state.js';
+import { computeRemainingS, evaluateSession, readLeaderboard } from './state.js';
 
 const SHELLY_POLL_DELAY_MS = 1100; // Shelly Cloud rate limit: ~1 req/sec per auth_key
 
@@ -117,6 +117,13 @@ export async function pollAndSync(env) {
   metrics.push({ name: 'sauna_power_watts', labels: { device: 'primary', channel: '0', name: 'heater' }, value: heaterOn ? 6000 : 0 });
   metrics.push({ name: 'sauna_energy_kwh_total', labels: {}, value: sessionState?.energyKwhTotal ?? 0 });
   metrics.push({ name: 'sauna_energy_kwh_month', labels: {}, value: sessionState?.energyKwhMonth ?? 0 });
+
+  // Push each leaderboard entry as a metric so Grafana can display a ranked panel.
+  // One time series per session (small cardinality — grows by ~1/week).
+  const lb = await readLeaderboard(env);
+  for (const entry of lb.entries) {
+    metrics.push({ name: 'sauna_session_peak_tempf', labels: { session: String(entry.session), date: entry.date }, value: entry.peakTempF });
+  }
 
   if (devices.primary) devices.primary.sessionActive = sessionActive;
 
