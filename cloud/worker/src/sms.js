@@ -1,5 +1,9 @@
 /**
  * SMS handler — receives Twilio webhooks, dispatches sauna commands.
+ *
+ * Public Grafana dashboard (shareable via SMS):
+ *   https://panoramasauna.grafana.net/public-dashboards/3ed0e6aa06394c96992bbcd1bfce9ec8
+ * TODO: include this link (or a bit.ly/tinyurl shortened version) in status replies.
  */
 
 import { shellySetSauna, shellyCloudStatus } from './shelly.js';
