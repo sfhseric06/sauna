@@ -39,6 +39,12 @@
       "id": "state-timeline",
       "name": "State timeline",
       "version": ""
+    },
+    {
+      "type": "panel",
+      "id": "gauge",
+      "name": "Gauge",
+      "version": ""
     }
   ],
   "title": "Sauna",
@@ -46,216 +52,139 @@
   "schemaVersion": 38,
   "version": 1,
   "refresh": "1m",
-  "tags": [
-    "sauna"
-  ],
+  "tags": ["sauna"],
   "timezone": "browser",
-  "time": {
-    "from": "now-24h",
-    "to": "now"
-  },
+  "time": { "from": "now-24h", "to": "now" },
   "timepicker": {},
   "graphTooltip": 1,
-  "annotations": {
-    "list": []
-  },
+  "annotations": { "list": [] },
   "links": [],
-  "templating": {
-    "list": []
-  },
+  "templating": { "list": [] },
   "panels": [
+
     {
       "id": 1,
       "type": "timeseries",
       "title": "Temperature",
-      "gridPos": {
-        "x": 0,
-        "y": 0,
-        "w": 24,
-        "h": 8
-      },
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
-      },
+      "gridPos": { "x": 0, "y": 0, "w": 24, "h": 8 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
       "targets": [
-        {
-          "refId": "A",
-          "expr": "sauna_temperature_fahrenheit{sensor=\"indoor\"}",
-          "legendFormat": "Indoor"
-        },
-        {
-          "refId": "B",
-          "expr": "sauna_temperature_fahrenheit{sensor=\"outdoor\"}",
-          "legendFormat": "Outdoor"
-        }
+        { "refId": "A", "expr": "sauna_temperature_fahrenheit{sensor=\"indoor\"}",  "legendFormat": "Indoor"  },
+        { "refId": "B", "expr": "sauna_temperature_fahrenheit{sensor=\"outdoor\"}", "legendFormat": "Outdoor" }
       ],
       "fieldConfig": {
         "defaults": {
           "unit": "fahrenheit",
-          "custom": {
-            "lineWidth": 2,
-            "fillOpacity": 8,
-            "spanNulls": true
-          },
-          "color": {
-            "mode": "palette-classic"
-          },
+          "custom": { "lineWidth": 2, "fillOpacity": 8, "spanNulls": true },
+          "color": { "mode": "palette-classic" },
           "thresholds": {
             "mode": "absolute",
             "steps": [
-              {
-                "color": "blue",
-                "value": null
-              },
-              {
-                "color": "orange",
-                "value": 150
-              },
-              {
-                "color": "red",
-                "value": 190
-              }
+              { "color": "blue",   "value": null },
+              { "color": "orange", "value": 150  },
+              { "color": "red",    "value": 190  }
             ]
           }
         },
         "overrides": [
           {
-            "matcher": {
-              "id": "byName",
-              "options": "Outdoor"
-            },
+            "matcher": { "id": "byName", "options": "Outdoor" },
             "properties": [
-              {
-                "id": "custom.lineStyle",
-                "value": {
-                  "dash": [6, 4],
-                  "fill": "dash"
-                }
-              }
+              { "id": "custom.lineStyle", "value": { "dash": [6, 4], "fill": "dash" } }
             ]
           }
         ]
       },
       "options": {
-        "tooltip": {
-          "mode": "multi",
-          "sort": "none"
-        },
-        "legend": {
-          "displayMode": "list",
-          "placement": "bottom"
-        }
+        "tooltip": { "mode": "multi", "sort": "none" },
+        "legend": { "displayMode": "list", "placement": "bottom" }
       }
     },
+
     {
       "id": 2,
-      "type": "stat",
+      "type": "gauge",
       "title": "Indoor Temp",
-      "gridPos": {
-        "x": 0,
-        "y": 8,
-        "w": 4,
-        "h": 4
-      },
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
-      },
+      "gridPos": { "x": 0, "y": 8, "w": 5, "h": 6 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
       "targets": [
-        {
-          "refId": "A",
-          "expr": "sauna_temperature_fahrenheit{sensor=\"indoor\"}",
-          "instant": true
-        }
+        { "refId": "A", "expr": "sauna_temperature_fahrenheit{sensor=\"indoor\"}", "instant": true }
       ],
       "fieldConfig": {
         "defaults": {
           "unit": "fahrenheit",
-          "color": {
-            "mode": "thresholds"
-          },
+          "min": 0,
+          "max": 220,
+          "color": { "mode": "thresholds" },
           "thresholds": {
             "mode": "absolute",
             "steps": [
-              { "color": "blue",   "value": null },
-              { "color": "green",  "value": 60   },
-              { "color": "orange", "value": 150  },
-              { "color": "red",    "value": 190  }
+              { "value": null, "color": "#1c4e80" },
+              { "value": 50,   "color": "#1F60C4" },
+              { "value": 80,   "color": "#5794F2" },
+              { "value": 110,  "color": "#73BF69" },
+              { "value": 140,  "color": "#FADE2A" },
+              { "value": 165,  "color": "#FF9830" },
+              { "value": 185,  "color": "#F2495C" },
+              { "value": 205,  "color": "#C4162A" }
             ]
           }
         }
       },
       "options": {
         "reduceOptions": { "calcs": ["lastNotNull"] },
-        "textMode": "auto",
-        "colorMode": "background"
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true,
+        "orientation": "auto"
       }
     },
+
     {
       "id": 3,
-      "type": "stat",
+      "type": "gauge",
       "title": "Outdoor Temp",
-      "gridPos": {
-        "x": 4,
-        "y": 8,
-        "w": 4,
-        "h": 4
-      },
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
-      },
+      "gridPos": { "x": 5, "y": 8, "w": 5, "h": 6 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
       "targets": [
-        {
-          "refId": "A",
-          "expr": "sauna_temperature_fahrenheit{sensor=\"outdoor\"}",
-          "instant": true
-        }
+        { "refId": "A", "expr": "sauna_temperature_fahrenheit{sensor=\"outdoor\"}", "instant": true }
       ],
       "fieldConfig": {
         "defaults": {
           "unit": "fahrenheit",
-          "color": {
-            "mode": "thresholds"
-          },
+          "min": -20,
+          "max": 120,
+          "color": { "mode": "thresholds" },
           "thresholds": {
             "mode": "absolute",
             "steps": [
-              { "color": "blue",   "value": null },
-              { "color": "green",  "value": 40   },
-              { "color": "orange", "value": 85   },
-              { "color": "red",    "value": 100  }
+              { "value": null, "color": "#1c4e80" },
+              { "value": 0,    "color": "#1F60C4" },
+              { "value": 32,   "color": "#5794F2" },
+              { "value": 50,   "color": "#73BF69" },
+              { "value": 70,   "color": "#FADE2A" },
+              { "value": 85,   "color": "#FF9830" },
+              { "value": 100,  "color": "#F2495C" },
+              { "value": 110,  "color": "#C4162A" }
             ]
           }
         }
       },
       "options": {
         "reduceOptions": { "calcs": ["lastNotNull"] },
-        "textMode": "auto",
-        "colorMode": "background"
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true,
+        "orientation": "auto"
       }
     },
+
     {
       "id": 4,
       "type": "stat",
       "title": "Sauna",
-      "gridPos": {
-        "x": 8,
-        "y": 8,
-        "w": 4,
-        "h": 4
-      },
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
-      },
+      "gridPos": { "x": 10, "y": 8, "w": 7, "h": 3 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
       "targets": [
-        {
-          "refId": "A",
-          "expr": "sauna_session_active{device=\"primary\"}",
-          "instant": true
-        }
+        { "refId": "A", "expr": "sauna_session_active{device=\"primary\"}", "instant": true }
       ],
       "fieldConfig": {
         "defaults": {
@@ -284,26 +213,15 @@
         "colorMode": "background"
       }
     },
+
     {
       "id": 5,
       "type": "stat",
       "title": "Time Remaining",
-      "gridPos": {
-        "x": 12,
-        "y": 8,
-        "w": 6,
-        "h": 4
-      },
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
-      },
+      "gridPos": { "x": 17, "y": 8, "w": 7, "h": 3 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
       "targets": [
-        {
-          "refId": "A",
-          "expr": "sauna_remaining_seconds{device=\"primary\"}",
-          "instant": true
-        }
+        { "refId": "A", "expr": "sauna_remaining_seconds{device=\"primary\"}", "instant": true }
       ],
       "fieldConfig": {
         "defaults": {
@@ -326,26 +244,15 @@
         "colorMode": "value"
       }
     },
+
     {
       "id": 12,
       "type": "stat",
       "title": "Total Sessions",
-      "gridPos": {
-        "x": 18,
-        "y": 8,
-        "w": 6,
-        "h": 4
-      },
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
-      },
+      "gridPos": { "x": 10, "y": 11, "w": 14, "h": 3 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
       "targets": [
-        {
-          "refId": "A",
-          "expr": "sauna_sessions_total",
-          "instant": true
-        }
+        { "refId": "A", "expr": "sauna_sessions_total", "instant": true }
       ],
       "fieldConfig": {
         "defaults": {
@@ -364,115 +271,56 @@
         "colorMode": "background"
       }
     },
+
     {
       "id": 7,
       "type": "timeseries",
       "title": "Power Draw",
-      "gridPos": {
-        "x": 0,
-        "y": 12,
-        "w": 16,
-        "h": 8
-      },
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
-      },
+      "gridPos": { "x": 0, "y": 14, "w": 16, "h": 8 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
       "targets": [
-        {
-          "refId": "A",
-          "expr": "sauna_power_watts{device=\"primary\", name=\"heater\"}",
-          "legendFormat": "Heater"
-        },
-        {
-          "refId": "B",
-          "expr": "sauna_power_watts{device=\"hvac\"}",
-          "legendFormat": "HVAC Ch{{channel}}"
-        },
-        {
-          "refId": "C",
-          "expr": "sauna_power_watts{device=\"led\"}",
-          "legendFormat": "LED Strip"
-        },
-        {
-          "refId": "D",
-          "expr": "sauna_power_watts{device=\"exterior\"}",
-          "legendFormat": "Exterior Light"
-        }
+        { "refId": "A", "expr": "sauna_power_watts{device=\"primary\", name=\"heater\"}", "legendFormat": "Heater"            },
+        { "refId": "B", "expr": "sauna_power_watts{device=\"hvac\"}",                    "legendFormat": "HVAC Ch{{channel}}" },
+        { "refId": "C", "expr": "sauna_power_watts{device=\"led\"}",                     "legendFormat": "LED Strip"          },
+        { "refId": "D", "expr": "sauna_power_watts{device=\"exterior\"}",                "legendFormat": "Exterior Light"     }
       ],
       "fieldConfig": {
         "defaults": {
           "unit": "watt",
-          "custom": {
-            "lineWidth": 1,
-            "fillOpacity": 12,
-            "spanNulls": true
-          },
+          "custom": { "lineWidth": 1, "fillOpacity": 12, "spanNulls": true },
           "color": { "mode": "palette-classic" },
           "min": 0
         },
         "overrides": [
           {
-            "matcher": {
-              "id": "byRegexp",
-              "options": "HVAC.*|LED Strip|Exterior Light"
-            },
+            "matcher": { "id": "byRegexp", "options": "HVAC.*|LED Strip|Exterior Light" },
             "properties": [
-              {
-                "id": "custom.axisPlacement",
-                "value": "right"
-              },
-              {
-                "id": "custom.axisLabel",
-                "value": "Accessories (W)"
-              }
+              { "id": "custom.axisPlacement", "value": "right" },
+              { "id": "custom.axisLabel",     "value": "Accessories (W)" }
             ]
           },
           {
-            "matcher": {
-              "id": "byName",
-              "options": "Heater"
-            },
+            "matcher": { "id": "byName", "options": "Heater" },
             "properties": [
-              {
-                "id": "custom.axisLabel",
-                "value": "Heater (W)"
-              }
+              { "id": "custom.axisLabel", "value": "Heater (W)" }
             ]
           }
         ]
       },
       "options": {
-        "tooltip": {
-          "mode": "multi",
-          "sort": "desc"
-        },
-        "legend": {
-          "displayMode": "list",
-          "placement": "bottom"
-        }
+        "tooltip": { "mode": "multi", "sort": "desc" },
+        "legend": { "displayMode": "list", "placement": "bottom" }
       }
     },
+
     {
       "id": 8,
       "type": "stat",
       "title": "Heater Power",
-      "gridPos": {
-        "x": 16,
-        "y": 12,
-        "w": 8,
-        "h": 4
-      },
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
-      },
+      "gridPos": { "x": 16, "y": 14, "w": 8, "h": 4 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
       "targets": [
-        {
-          "refId": "A",
-          "expr": "sauna_power_watts{device=\"primary\", name=\"heater\"}",
-          "instant": true
-        }
+        { "refId": "A", "expr": "sauna_power_watts{device=\"primary\", name=\"heater\"}", "instant": true }
       ],
       "fieldConfig": {
         "defaults": {
@@ -494,27 +342,15 @@
         "colorMode": "background"
       }
     },
+
     {
       "id": 9,
       "type": "stat",
       "title": "HVAC Power",
-      "gridPos": {
-        "x": 16,
-        "y": 16,
-        "w": 8,
-        "h": 4
-      },
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
-      },
+      "gridPos": { "x": 16, "y": 18, "w": 8, "h": 4 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
       "targets": [
-        {
-          "refId": "A",
-          "expr": "sum(sauna_power_watts{device=\"hvac\"})",
-          "instant": true,
-          "legendFormat": "HVAC"
-        }
+        { "refId": "A", "expr": "sum(sauna_power_watts{device=\"hvac\"})", "instant": true, "legendFormat": "HVAC" }
       ],
       "fieldConfig": {
         "defaults": {
@@ -536,65 +372,30 @@
         "colorMode": "background"
       }
     },
+
     {
       "id": 10,
       "type": "state-timeline",
       "title": "Device States",
-      "gridPos": {
-        "x": 0,
-        "y": 20,
-        "w": 24,
-        "h": 6
-      },
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
-      },
+      "gridPos": { "x": 0, "y": 22, "w": 24, "h": 6 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
       "targets": [
-        {
-          "refId": "A",
-          "expr": "sauna_relay_on{name=\"exterior_light\"}",
-          "legendFormat": "Exterior Light"
-        },
-        {
-          "refId": "B",
-          "expr": "sauna_relay_on{name=\"led_strip\"}",
-          "legendFormat": "LED Strip"
-        },
-        {
-          "refId": "C",
-          "expr": "sauna_relay_on{name=\"hvac_0\"}",
-          "legendFormat": "HVAC Ch0"
-        },
-        {
-          "refId": "D",
-          "expr": "sauna_relay_on{name=\"hvac_1\"}",
-          "legendFormat": "HVAC Ch1"
-        },
-        {
-          "refId": "E",
-          "expr": "sauna_relay_on{name=\"safety_contactor\"}",
-          "legendFormat": "Safety Relay"
-        }
+        { "refId": "A", "expr": "sauna_relay_on{name=\"exterior_light\"}",  "legendFormat": "Exterior Light" },
+        { "refId": "B", "expr": "sauna_relay_on{name=\"led_strip\"}",        "legendFormat": "LED Strip"      },
+        { "refId": "C", "expr": "sauna_relay_on{name=\"hvac_0\"}",           "legendFormat": "HVAC Ch0"       },
+        { "refId": "D", "expr": "sauna_relay_on{name=\"hvac_1\"}",           "legendFormat": "HVAC Ch1"       },
+        { "refId": "E", "expr": "sauna_relay_on{name=\"safety_contactor\"}", "legendFormat": "Safety Relay"   }
       ],
       "fieldConfig": {
         "defaults": {
           "mappings": [
             {
               "type": "range",
-              "options": {
-                "from": -0.5,
-                "to": 0.5,
-                "result": { "text": "OFF", "color": "gray",  "index": 0 }
-              }
+              "options": { "from": -0.5, "to": 0.5, "result": { "text": "OFF", "color": "gray",  "index": 0 } }
             },
             {
               "type": "range",
-              "options": {
-                "from": 0.5,
-                "to": 1.5,
-                "result": { "text": "ON",  "color": "green", "index": 1 }
-              }
+              "options": { "from": 0.5,  "to": 1.5, "result": { "text": "ON",  "color": "green", "index": 1 } }
             }
           ],
           "color": { "mode": "fixed", "fixedColor": "gray" },
@@ -602,10 +403,7 @@
             "mode": "absolute",
             "steps": [{ "color": "gray", "value": null }]
           },
-          "custom": {
-            "fillOpacity": 85,
-            "lineWidth": 0
-          }
+          "custom": { "fillOpacity": 85, "lineWidth": 0 }
         }
       },
       "options": {
@@ -617,40 +415,21 @@
         "legend": { "displayMode": "list", "placement": "bottom" }
       }
     },
+
     {
       "id": 13,
       "type": "timeseries",
       "title": "Energy Over Time",
-      "gridPos": {
-        "x": 0,
-        "y": 26,
-        "w": 12,
-        "h": 8
-      },
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
-      },
+      "gridPos": { "x": 0, "y": 28, "w": 12, "h": 8 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
       "targets": [
-        {
-          "refId": "A",
-          "expr": "sauna_energy_kwh_total",
-          "legendFormat": "All-time kWh"
-        },
-        {
-          "refId": "B",
-          "expr": "sauna_energy_kwh_month",
-          "legendFormat": "This month kWh"
-        }
+        { "refId": "A", "expr": "sauna_energy_kwh_total", "legendFormat": "All-time kWh"    },
+        { "refId": "B", "expr": "sauna_energy_kwh_month", "legendFormat": "This month kWh"  }
       ],
       "fieldConfig": {
         "defaults": {
           "unit": "kwatth",
-          "custom": {
-            "lineWidth": 2,
-            "fillOpacity": 15,
-            "spanNulls": true
-          },
+          "custom": { "lineWidth": 2, "fillOpacity": 15, "spanNulls": true },
           "color": { "mode": "palette-classic" },
           "min": 0
         }
@@ -660,27 +439,15 @@
         "legend": { "displayMode": "list", "placement": "bottom" }
       }
     },
+
     {
       "id": 14,
       "type": "stat",
       "title": "Total Energy",
-      "gridPos": {
-        "x": 12,
-        "y": 26,
-        "w": 6,
-        "h": 8
-      },
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
-      },
+      "gridPos": { "x": 12, "y": 28, "w": 6, "h": 8 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
       "targets": [
-        {
-          "refId": "A",
-          "expr": "sauna_energy_kwh_total",
-          "instant": true,
-          "legendFormat": "All-time"
-        }
+        { "refId": "A", "expr": "sauna_energy_kwh_total", "instant": true, "legendFormat": "All-time" }
       ],
       "fieldConfig": {
         "defaults": {
@@ -699,27 +466,15 @@
         "colorMode": "background"
       }
     },
+
     {
       "id": 15,
       "type": "stat",
       "title": "Energy This Month",
-      "gridPos": {
-        "x": 18,
-        "y": 26,
-        "w": 6,
-        "h": 8
-      },
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
-      },
+      "gridPos": { "x": 18, "y": 28, "w": 6, "h": 8 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
       "targets": [
-        {
-          "refId": "A",
-          "expr": "sauna_energy_kwh_month",
-          "instant": true,
-          "legendFormat": "Month kWh"
-        }
+        { "refId": "A", "expr": "sauna_energy_kwh_month", "instant": true, "legendFormat": "Month kWh" }
       ],
       "fieldConfig": {
         "defaults": {
@@ -738,5 +493,6 @@
         "colorMode": "background"
       }
     }
+
   ]
 }
