@@ -424,7 +424,7 @@
       "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
       "targets": [
         { "refId": "A", "expr": "sauna_energy_kwh_total", "legendFormat": "All-time kWh"    },
-        { "refId": "B", "expr": "sauna_energy_kwh_month", "legendFormat": "This month kWh"  }
+        { "refId": "B", "expr": "sauna_energy_kwh_month", "legendFormat": "Trailing 30d kWh" }
       ],
       "fieldConfig": {
         "defaults": {
@@ -470,7 +470,7 @@
     {
       "id": 15,
       "type": "stat",
-      "title": "Energy This Month",
+      "title": "Energy (Trailing 30 Days)",
       "gridPos": { "x": 18, "y": 28, "w": 6, "h": 8 },
       "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
       "targets": [
