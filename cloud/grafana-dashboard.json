@@ -129,10 +129,7 @@
               {
                 "id": "custom.lineStyle",
                 "value": {
-                  "dash": [
-                    6,
-                    4
-                  ],
+                  "dash": [6, 4],
                   "fill": "dash"
                 }
               }
@@ -158,7 +155,7 @@
       "gridPos": {
         "x": 0,
         "y": 8,
-        "w": 6,
+        "w": 4,
         "h": 4
       },
       "datasource": {
@@ -181,32 +178,16 @@
           "thresholds": {
             "mode": "absolute",
             "steps": [
-              {
-                "color": "blue",
-                "value": null
-              },
-              {
-                "color": "green",
-                "value": 60
-              },
-              {
-                "color": "orange",
-                "value": 150
-              },
-              {
-                "color": "red",
-                "value": 190
-              }
+              { "color": "blue",   "value": null },
+              { "color": "green",  "value": 60   },
+              { "color": "orange", "value": 150  },
+              { "color": "red",    "value": 190  }
             ]
           }
         }
       },
       "options": {
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ]
-        },
+        "reduceOptions": { "calcs": ["lastNotNull"] },
         "textMode": "auto",
         "colorMode": "background"
       }
@@ -216,9 +197,9 @@
       "type": "stat",
       "title": "Outdoor Temp",
       "gridPos": {
-        "x": 6,
+        "x": 4,
         "y": 8,
-        "w": 6,
+        "w": 4,
         "h": 4
       },
       "datasource": {
@@ -241,32 +222,16 @@
           "thresholds": {
             "mode": "absolute",
             "steps": [
-              {
-                "color": "blue",
-                "value": null
-              },
-              {
-                "color": "green",
-                "value": 40
-              },
-              {
-                "color": "orange",
-                "value": 85
-              },
-              {
-                "color": "red",
-                "value": 100
-              }
+              { "color": "blue",   "value": null },
+              { "color": "green",  "value": 40   },
+              { "color": "orange", "value": 85   },
+              { "color": "red",    "value": 100  }
             ]
           }
         }
       },
       "options": {
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ]
-        },
+        "reduceOptions": { "calcs": ["lastNotNull"] },
         "textMode": "auto",
         "colorMode": "background"
       }
@@ -276,9 +241,9 @@
       "type": "stat",
       "title": "Sauna",
       "gridPos": {
-        "x": 12,
+        "x": 8,
         "y": 8,
-        "w": 6,
+        "w": 4,
         "h": 4
       },
       "datasource": {
@@ -298,43 +263,23 @@
             {
               "type": "value",
               "options": {
-                "0": {
-                  "text": "OFF",
-                  "color": "semi-dark-gray",
-                  "index": 0
-                },
-                "1": {
-                  "text": "ON",
-                  "color": "semi-dark-orange",
-                  "index": 1
-                }
+                "0": { "text": "OFF", "color": "semi-dark-gray",   "index": 0 },
+                "1": { "text": "ON",  "color": "semi-dark-orange", "index": 1 }
               }
             }
           ],
-          "color": {
-            "mode": "thresholds"
-          },
+          "color": { "mode": "thresholds" },
           "thresholds": {
             "mode": "absolute",
             "steps": [
-              {
-                "color": "gray",
-                "value": null
-              },
-              {
-                "color": "orange",
-                "value": 1
-              }
+              { "color": "gray",   "value": null },
+              { "color": "orange", "value": 1    }
             ]
           }
         }
       },
       "options": {
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ]
-        },
+        "reduceOptions": { "calcs": ["lastNotNull"] },
         "textMode": "auto",
         "colorMode": "background"
       }
@@ -344,7 +289,7 @@
       "type": "stat",
       "title": "Time Remaining",
       "gridPos": {
-        "x": 18,
+        "x": 12,
         "y": 8,
         "w": 6,
         "h": 4
@@ -363,51 +308,33 @@
       "fieldConfig": {
         "defaults": {
           "unit": "s",
-          "color": {
-            "mode": "thresholds"
-          },
+          "color": { "mode": "thresholds" },
           "thresholds": {
             "mode": "absolute",
             "steps": [
-              {
-                "color": "gray",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 1
-              },
-              {
-                "color": "orange",
-                "value": 600
-              },
-              {
-                "color": "green",
-                "value": 1800
-              }
+              { "color": "gray",   "value": null },
+              { "color": "red",    "value": 1    },
+              { "color": "orange", "value": 600  },
+              { "color": "green",  "value": 1800 }
             ]
           }
         }
       },
       "options": {
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ]
-        },
+        "reduceOptions": { "calcs": ["lastNotNull"] },
         "textMode": "auto",
         "colorMode": "value"
       }
     },
     {
-      "id": 6,
-      "type": "state-timeline",
-      "title": "Sauna Sessions",
+      "id": 12,
+      "type": "stat",
+      "title": "Total Sessions",
       "gridPos": {
-        "x": 0,
-        "y": 12,
-        "w": 24,
-        "h": 5
+        "x": 18,
+        "y": 8,
+        "w": 6,
+        "h": 4
       },
       "datasource": {
         "type": "prometheus",
@@ -416,62 +343,25 @@
       "targets": [
         {
           "refId": "A",
-          "expr": "sauna_session_active{device=\"primary\"}",
-          "legendFormat": "Sauna"
+          "expr": "sauna_sessions_total",
+          "instant": true
         }
       ],
       "fieldConfig": {
         "defaults": {
-          "mappings": [
-            {
-              "type": "value",
-              "options": {
-                "0": {
-                  "text": "OFF",
-                  "color": "semi-dark-gray",
-                  "index": 0
-                },
-                "1": {
-                  "text": "ON",
-                  "color": "semi-dark-orange",
-                  "index": 1
-                }
-              }
-            }
-          ],
-          "color": {
-            "mode": "thresholds"
-          },
+          "color": { "mode": "fixed", "fixedColor": "blue" },
           "thresholds": {
             "mode": "absolute",
-            "steps": [
-              {
-                "color": "gray",
-                "value": null
-              },
-              {
-                "color": "orange",
-                "value": 1
-              }
-            ]
+            "steps": [{ "color": "blue", "value": null }]
           },
-          "custom": {
-            "fillOpacity": 85,
-            "lineWidth": 0
-          }
+          "unit": "short",
+          "decimals": 0
         }
       },
       "options": {
-        "mergeValues": true,
-        "rowHeight": 0.9,
-        "showValue": "always",
-        "alignValue": "center",
-        "tooltip": {
-          "mode": "single"
-        },
-        "legend": {
-          "displayMode": "hidden"
-        }
+        "reduceOptions": { "calcs": ["lastNotNull"] },
+        "textMode": "auto",
+        "colorMode": "background"
       }
     },
     {
@@ -480,7 +370,7 @@
       "title": "Power Draw",
       "gridPos": {
         "x": 0,
-        "y": 17,
+        "y": 12,
         "w": 16,
         "h": 8
       },
@@ -491,7 +381,7 @@
       "targets": [
         {
           "refId": "A",
-          "expr": "sauna_power_watts{device=\"primary\"}",
+          "expr": "sauna_power_watts{device=\"primary\", name=\"heater\"}",
           "legendFormat": "Heater"
         },
         {
@@ -516,16 +406,41 @@
           "custom": {
             "lineWidth": 1,
             "fillOpacity": 12,
-            "stacking": {
-              "mode": "none"
-            },
             "spanNulls": true
           },
-          "color": {
-            "mode": "palette-classic"
-          },
+          "color": { "mode": "palette-classic" },
           "min": 0
-        }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "HVAC.*|LED Strip|Exterior Light"
+            },
+            "properties": [
+              {
+                "id": "custom.axisPlacement",
+                "value": "right"
+              },
+              {
+                "id": "custom.axisLabel",
+                "value": "Accessories (W)"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Heater"
+            },
+            "properties": [
+              {
+                "id": "custom.axisLabel",
+                "value": "Heater (W)"
+              }
+            ]
+          }
+        ]
       },
       "options": {
         "tooltip": {
@@ -544,7 +459,7 @@
       "title": "Heater Power",
       "gridPos": {
         "x": 16,
-        "y": 17,
+        "y": 12,
         "w": 8,
         "h": 4
       },
@@ -555,41 +470,26 @@
       "targets": [
         {
           "refId": "A",
-          "expr": "sauna_power_watts{device=\"primary\", channel=\"0\"}",
+          "expr": "sauna_power_watts{device=\"primary\", name=\"heater\"}",
           "instant": true
         }
       ],
       "fieldConfig": {
         "defaults": {
           "unit": "watt",
-          "color": {
-            "mode": "thresholds"
-          },
+          "color": { "mode": "thresholds" },
           "thresholds": {
             "mode": "absolute",
             "steps": [
-              {
-                "color": "gray",
-                "value": null
-              },
-              {
-                "color": "orange",
-                "value": 100
-              },
-              {
-                "color": "red",
-                "value": 4000
-              }
+              { "color": "gray",   "value": null },
+              { "color": "orange", "value": 100  },
+              { "color": "red",    "value": 4000 }
             ]
           }
         }
       },
       "options": {
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ]
-        },
+        "reduceOptions": { "calcs": ["lastNotNull"] },
         "textMode": "auto",
         "colorMode": "background"
       }
@@ -600,7 +500,7 @@
       "title": "HVAC Power",
       "gridPos": {
         "x": 16,
-        "y": 21,
+        "y": 16,
         "w": 8,
         "h": 4
       },
@@ -619,34 +519,19 @@
       "fieldConfig": {
         "defaults": {
           "unit": "watt",
-          "color": {
-            "mode": "thresholds"
-          },
+          "color": { "mode": "thresholds" },
           "thresholds": {
             "mode": "absolute",
             "steps": [
-              {
-                "color": "gray",
-                "value": null
-              },
-              {
-                "color": "blue",
-                "value": 10
-              },
-              {
-                "color": "orange",
-                "value": 500
-              }
+              { "color": "gray",   "value": null },
+              { "color": "blue",   "value": 10   },
+              { "color": "orange", "value": 500  }
             ]
           }
         }
       },
       "options": {
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ]
-        },
+        "reduceOptions": { "calcs": ["lastNotNull"] },
         "textMode": "auto",
         "colorMode": "background"
       }
@@ -657,7 +542,7 @@
       "title": "Device States",
       "gridPos": {
         "x": 0,
-        "y": 25,
+        "y": 20,
         "w": 24,
         "h": 6
       },
@@ -696,36 +581,26 @@
         "defaults": {
           "mappings": [
             {
-              "type": "value",
+              "type": "range",
               "options": {
-                "0": {
-                  "text": "OFF",
-                  "color": "semi-dark-gray",
-                  "index": 0
-                },
-                "1": {
-                  "text": "ON",
-                  "color": "semi-dark-green",
-                  "index": 1
-                }
+                "from": -0.5,
+                "to": 0.5,
+                "result": { "text": "OFF", "color": "gray",  "index": 0 }
+              }
+            },
+            {
+              "type": "range",
+              "options": {
+                "from": 0.5,
+                "to": 1.5,
+                "result": { "text": "ON",  "color": "green", "index": 1 }
               }
             }
           ],
-          "color": {
-            "mode": "thresholds"
-          },
+          "color": { "mode": "fixed", "fixedColor": "gray" },
           "thresholds": {
             "mode": "absolute",
-            "steps": [
-              {
-                "color": "gray",
-                "value": null
-              },
-              {
-                "color": "green",
-                "value": 1
-              }
-            ]
+            "steps": [{ "color": "gray", "value": null }]
           },
           "custom": {
             "fillOpacity": 85,
@@ -738,24 +613,19 @@
         "rowHeight": 0.8,
         "showValue": "always",
         "alignValue": "center",
-        "tooltip": {
-          "mode": "single"
-        },
-        "legend": {
-          "displayMode": "list",
-          "placement": "bottom"
-        }
+        "tooltip": { "mode": "single" },
+        "legend": { "displayMode": "list", "placement": "bottom" }
       }
     },
     {
-      "id": 11,
+      "id": 13,
       "type": "timeseries",
-      "title": "Session Timer",
+      "title": "Energy Over Time",
       "gridPos": {
         "x": 0,
-        "y": 31,
-        "w": 24,
-        "h": 6
+        "y": 26,
+        "w": 12,
+        "h": 8
       },
       "datasource": {
         "type": "prometheus",
@@ -764,44 +634,41 @@
       "targets": [
         {
           "refId": "A",
-          "expr": "sauna_remaining_seconds{device=\"primary\"} > 0",
-          "legendFormat": "Remaining"
+          "expr": "sauna_energy_kwh_total",
+          "legendFormat": "All-time kWh"
+        },
+        {
+          "refId": "B",
+          "expr": "sauna_energy_kwh_month",
+          "legendFormat": "This month kWh"
         }
       ],
       "fieldConfig": {
         "defaults": {
-          "unit": "s",
+          "unit": "kwatth",
           "custom": {
             "lineWidth": 2,
-            "fillOpacity": 20,
-            "spanNulls": false
+            "fillOpacity": 15,
+            "spanNulls": true
           },
-          "color": {
-            "fixedColor": "orange",
-            "mode": "fixed"
-          },
-          "min": 0,
-          "max": 3600
+          "color": { "mode": "palette-classic" },
+          "min": 0
         }
       },
       "options": {
-        "tooltip": {
-          "mode": "single"
-        },
-        "legend": {
-          "displayMode": "hidden"
-        }
+        "tooltip": { "mode": "multi" },
+        "legend": { "displayMode": "list", "placement": "bottom" }
       }
     },
     {
-      "id": 12,
+      "id": 14,
       "type": "stat",
-      "title": "Total Sessions",
+      "title": "Total Energy",
       "gridPos": {
-        "x": 18,
-        "y": 8,
+        "x": 12,
+        "y": 26,
         "w": 6,
-        "h": 4
+        "h": 8
       },
       "datasource": {
         "type": "prometheus",
@@ -810,35 +677,63 @@
       "targets": [
         {
           "refId": "A",
-          "expr": "sauna_sessions_total",
-          "instant": true
+          "expr": "sauna_energy_kwh_total",
+          "instant": true,
+          "legendFormat": "All-time"
         }
       ],
       "fieldConfig": {
         "defaults": {
-          "color": {
-            "mode": "fixed",
-            "fixedColor": "blue"
-          },
+          "unit": "kwatth",
+          "decimals": 1,
+          "color": { "mode": "fixed", "fixedColor": "orange" },
           "thresholds": {
             "mode": "absolute",
-            "steps": [
-              {
-                "color": "blue",
-                "value": null
-              }
-            ]
-          },
-          "unit": "short",
-          "decimals": 0
+            "steps": [{ "color": "orange", "value": null }]
+          }
         }
       },
       "options": {
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ]
-        },
+        "reduceOptions": { "calcs": ["lastNotNull"] },
+        "textMode": "auto",
+        "colorMode": "background"
+      }
+    },
+    {
+      "id": 15,
+      "type": "stat",
+      "title": "Energy This Month",
+      "gridPos": {
+        "x": 18,
+        "y": 26,
+        "w": 6,
+        "h": 8
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "sauna_energy_kwh_month",
+          "instant": true,
+          "legendFormat": "Month kWh"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "kwatth",
+          "decimals": 1,
+          "color": { "mode": "fixed", "fixedColor": "semi-dark-orange" },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [{ "color": "semi-dark-orange", "value": null }]
+          }
+        }
+      },
+      "options": {
+        "reduceOptions": { "calcs": ["lastNotNull"] },
         "textMode": "auto",
         "colorMode": "background"
       }
