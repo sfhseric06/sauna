@@ -25,6 +25,13 @@ Thumbs.db
 *-secrets.json
 credentials.json
 
+# Cloud secrets — never commit
+cloud/secrets.sh
+
+# Cloudflare / Node
+cloud/worker/node_modules/
+cloud/worker/.wrangler/
+
 # Node modules (if adding any tooling later)
 node_modules/
 logs/

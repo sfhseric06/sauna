@@ -23,6 +23,12 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # Source device manifest
 source "$SCRIPT_DIR/../hardware/devices.sh"
 
+# Load cloud config + secrets if present (optional — cloud webhook is skipped if not configured)
+CLOUD_CONFIG="$SCRIPT_DIR/../cloud/config.sh"
+CLOUD_SECRETS="$SCRIPT_DIR/../cloud/secrets.sh"
+if [ -f "$CLOUD_CONFIG" ]; then source "$CLOUD_CONFIG"; fi
+if [ -f "$CLOUD_SECRETS" ]; then source "$CLOUD_SECRETS"; fi
+
 # -----------------------------------------------------------------------------
 # CONFIGURATION
 # Defaults are loaded from hardware/devices.sh - override with arguments
@@ -239,7 +245,17 @@ if [ ! -f "$SCRIPT_FILE" ]; then
     exit 1
 fi
 
+# Substitute cloud Worker placeholders if config is available
 SCRIPT_CONTENT=$(cat "$SCRIPT_FILE")
+if [ -n "$WORKER_URL" ] && [ -n "$WEBHOOK_SECRET" ]; then
+    SCRIPT_CONTENT="${SCRIPT_CONTENT//__WORKER_URL__/$WORKER_URL}"
+    SCRIPT_CONTENT="${SCRIPT_CONTENT//__WORKER_SECRET__/$WEBHOOK_SECRET}"
+    echo "  ✓ Cloud Worker URL injected: $WORKER_URL"
+else
+    echo "  ⚠ Cloud config not found — Worker webhook will be inactive"
+    echo "    (run deploy-cloud.sh first, then re-run this script)"
+    # Leave placeholders — script will still work, HTTP.POST will just fail silently
+fi
 
 # Check if script slot exists
 SCRIPT_STATUS=$(rpc_call "Script.GetStatus?id=$SCRIPT_ID" 2>/dev/null || echo '{"error":{}}')

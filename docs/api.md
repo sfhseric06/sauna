@@ -132,7 +132,7 @@ GET http://shellypro2-0cb815fc96dc.local/rpc/Switch.Set?id=0&on=false
 ```yaml
 rest_command:
   sauna_toggle:
-    url: "http://shellypro2-0cb815fcaff4.local/rpc/Script.Eval?id=1&code=Shelly.emitEvent({info:{event:'ha_toggle'}})"
+    url: "http://shellypro2-0cb815fcaff4.local/rpc/Script.Eval?id=1&code=Shelly.emitEvent('ha_toggle')"
     method: post
 
 sensor:
@@ -149,7 +149,7 @@ sensor:
   "id": "sauna_toggle",
   "type": "http request",
   "method": "POST",
-  "url": "http://shellypro2-0cb815fcaff4.local/rpc/Script.Eval?id=1&code=Shelly.emitEvent({info:{event:'ha_toggle'}})"
+  "url": "http://shellypro2-0cb815fcaff4.local/rpc/Script.Eval?id=1&code=Shelly.emitEvent('ha_toggle')"
 }
 ```
 

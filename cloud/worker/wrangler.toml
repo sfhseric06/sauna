@@ -1,0 +1,27 @@
+name = "sauna"
+main = "src/index.js"
+compatibility_date = "2025-01-01"
+
+[[kv_namespaces]]
+binding = "SAUNA_KV"
+id = "35f462bb6d31485f9f09d132cc4e4b41"
+
+[triggers]
+crons = ["*/5 * * * *"]
+
+# Non-secret config — set by deploy-cloud.sh from cloud/config.sh
+# Secrets — set via `wrangler secret put` by deploy-cloud.sh from cloud/secrets.sh:
+#   SHELLY_AUTH_KEY
+#   TWILIO_AUTH_TOKEN
+#   WEBHOOK_SECRET
+#   GRAFANA_API_KEY
+
+[vars]
+SHELLY_CLOUD_SERVER  = "https://shelly-142-eu.shelly.cloud"
+PRIMARY_DEVICE_ID    = "0cb815fcaff4"
+SECONDARY_DEVICE_ID  = "0cb815fc96dc"
+EXTERIOR_DEVICE_ID   = "3c8a1fe851a4"
+HVAC_DEVICE_ID       = "3c8a1fe85f54"
+LED_DEVICE_ID        = "30c922571550"
+GRAFANA_METRICS_URL  = "https://prometheus-prod-67-prod-us-west-0.grafana.net/api/prom/push"
+GRAFANA_METRICS_USER = "3121540"

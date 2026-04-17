@@ -57,19 +57,19 @@ devices:
   
   hvac_controller:
     model: "Shelly Plus 2PM"
-    device_id: "shellyplus2pm-3c8a1fe851a4"
-    hostname: "shellyplus2pm-3c8a1fe851a4.local"
-    mac_address: "3C:8A:1F:E8:51:A4"
-    role: "HVAC control"
-    notes: "See schematic for wiring details"
-    
-  exterior_sensor:
-    model: "Shelly Plus 2PM"
     device_id: "shellyplus2pm-3c8a1fe85f54"
     hostname: "shellyplus2pm-3c8a1fe85f54.local"
     mac_address: "3C:8A:1F:E8:5F:54"
+    role: "HVAC control"
+    notes: "See schematic for wiring details"
+
+  exterior_sensor:
+    model: "Shelly Plus 2PM"
+    device_id: "shellyplus2pm-3c8a1fe851a4"
+    hostname: "shellyplus2pm-3c8a1fe851a4.local"
+    mac_address: "3C:8A:1F:E8:51:A4"
     role: "Exterior light control, indoor/outdoor temperature monitoring"
-    ha_entity_prefix: "sensor.shellyplus2pm_3c8a1fe85f54"
+    ha_entity_prefix: "sensor.shellyplus2pm_3c8a1fe851a4"
 
 # =============================================================================
 # PRIMARY CONTROLLER PIN MAPPING
@@ -142,11 +142,11 @@ secondary_controller:
 
 temperature_sensors:
   outdoor:
-    entity_id: "sensor.shellyplus2pm_3c8a1fe85f54_temperature"
+    entity_id: "sensor.shellyplus2pm_3c8a1fe851a4_temperature"
     location: "Outside sauna enclosure"
-    
+
   indoor:
-    entity_id: "sensor.shellyplus2pm_3c8a1fe85f54_temperature_2"
+    entity_id: "sensor.shellyplus2pm_3c8a1fe851a4_temperature_2"
     location: "Inside sauna (measures sauna temperature)"
     session_trigger_threshold_f: 90
 
