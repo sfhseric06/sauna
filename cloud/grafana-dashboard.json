@@ -184,7 +184,7 @@
       "gridPos": { "x": 10, "y": 8, "w": 7, "h": 3 },
       "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
       "targets": [
-        { "refId": "A", "expr": "sauna_session_active{device=\"primary\"}", "instant": true }
+        { "refId": "A", "expr": "sauna_relay_on{name=\"heater_contactor\"}", "instant": true }
       ],
       "fieldConfig": {
         "defaults": {
@@ -380,11 +380,12 @@
       "gridPos": { "x": 0, "y": 22, "w": 24, "h": 6 },
       "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
       "targets": [
-        { "refId": "A", "expr": "sauna_relay_on{name=\"exterior_light\"}",  "legendFormat": "Exterior Light" },
-        { "refId": "B", "expr": "sauna_relay_on{name=\"led_strip\"}",        "legendFormat": "LED Strip"      },
-        { "refId": "C", "expr": "sauna_relay_on{name=\"hvac_0\"}",           "legendFormat": "HVAC Ch0"       },
-        { "refId": "D", "expr": "sauna_relay_on{name=\"hvac_1\"}",           "legendFormat": "HVAC Ch1"       },
-        { "refId": "E", "expr": "sauna_relay_on{name=\"safety_contactor\"}", "legendFormat": "Safety Relay"   }
+        { "refId": "A", "expr": "sauna_relay_on{name=\"heater_contactor\"}", "legendFormat": "Heater Relay"   },
+        { "refId": "B", "expr": "sauna_relay_on{name=\"safety_contactor\"}", "legendFormat": "Safety Relay"   },
+        { "refId": "C", "expr": "sauna_relay_on{name=\"exterior_light\"}",   "legendFormat": "Exterior Light" },
+        { "refId": "D", "expr": "sauna_relay_on{name=\"led_strip\"}",        "legendFormat": "LED Strip"      },
+        { "refId": "E", "expr": "sauna_relay_on{name=\"hvac_0\"}",           "legendFormat": "HVAC Ch0"       },
+        { "refId": "F", "expr": "sauna_relay_on{name=\"hvac_1\"}",           "legendFormat": "HVAC Ch1"       }
       ],
       "fieldConfig": {
         "defaults": {

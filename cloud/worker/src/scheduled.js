@@ -45,6 +45,8 @@ export async function pollAndSync(env) {
   } else {
     relayOn = !!primaryStatus['switch:0']?.output;
     const heaterPower = primaryStatus['switch:0']?.apower ?? null;
+    // Relay on/off state — this is the authoritative "is the heater relay energised" signal.
+    metrics.push({ name: 'sauna_relay_on', labels: { device: 'primary', channel: '0', name: 'heater_contactor' }, value: relayOn ? 1 : 0 });
     if (heaterPower != null) metrics.push({ name: 'sauna_power_watts', labels: { device: 'primary', channel: '0', name: 'heater_contactor' }, value: heaterPower });
     devices.primary = { on: relayOn, apower: heaterPower };
   }
@@ -110,8 +112,10 @@ export async function pollAndSync(env) {
   metrics.push({ name: 'sauna_session_active',    labels: { device: 'primary' }, value: sessionActive ? 1 : 0 });
   metrics.push({ name: 'sauna_remaining_seconds', labels: { device: 'primary' }, value: remainingS            });
   metrics.push({ name: 'sauna_sessions_total',    labels: {},                    value: sessionCount          });
-  // Heater is a 6kW resistive element — always full power when session active, zero otherwise.
-  metrics.push({ name: 'sauna_power_watts',      labels: { device: 'primary', channel: '0', name: 'heater' }, value: sessionActive ? 6000 : 0 });
+  // Heater is a 6kW resistive element — full power whenever relay is on, zero otherwise.
+  // Use relayOn (direct hardware state), not sessionActive (temperature-confirmed), so
+  // power shows correctly during warmup before the 20-min session confirmation window.
+  metrics.push({ name: 'sauna_power_watts',      labels: { device: 'primary', channel: '0', name: 'heater' }, value: relayOn ? 6000 : 0 });
   metrics.push({ name: 'sauna_energy_kwh_total', labels: {}, value: sessionState?.energyKwhTotal ?? 0 });
   metrics.push({ name: 'sauna_energy_kwh_month', labels: {}, value: sessionState?.energyKwhMonth ?? 0 });
 
