@@ -39,24 +39,24 @@ export async function pollAndSync(env) {
     devices.exterior = { on: lightOn === 1, apower: lightPower };
   }
 
+  // Primary (SPSW-202XE12UL, Shelly Pro 2 non-PM): no apower — relay state only.
   let relayOn = false;
   if (!primaryStatus) {
     console.error('Poll: could not reach primary Shelly');
   } else {
     relayOn = !!primaryStatus['switch:0']?.output;
-    const heaterPower = primaryStatus['switch:0']?.apower ?? null;
-    // Relay on/off state — this is the authoritative "is the heater relay energised" signal.
     metrics.push({ name: 'sauna_relay_on', labels: { device: 'primary', channel: '0', name: 'heater_contactor' }, value: relayOn ? 1 : 0 });
-    if (heaterPower != null) metrics.push({ name: 'sauna_power_watts', labels: { device: 'primary', channel: '0', name: 'heater_contactor' }, value: heaterPower });
-    devices.primary = { on: relayOn, apower: heaterPower };
+    devices.primary = { on: relayOn };
   }
 
+  // Secondary (safety contactor): both primary AND secondary must be on for heater to draw power.
+  let safetyRelayOn = false;
   if (!secondaryStatus) {
     console.error('Poll: could not reach secondary Shelly');
   } else {
-    const safetyOn = secondaryStatus['switch:0']?.output ? 1 : 0;
-    metrics.push({ name: 'sauna_relay_on', labels: { device: 'secondary', channel: '0', name: 'safety_contactor' }, value: safetyOn });
-    devices.secondary = { on: safetyOn === 1 };
+    safetyRelayOn = !!secondaryStatus['switch:0']?.output;
+    metrics.push({ name: 'sauna_relay_on', labels: { device: 'secondary', channel: '0', name: 'safety_contactor' }, value: safetyRelayOn ? 1 : 0 });
+    devices.secondary = { on: safetyRelayOn };
   }
 
   // Temperature from HVAC device add-on probes: temperature:100=outdoor, temperature:101=indoor.
@@ -88,14 +88,13 @@ export async function pollAndSync(env) {
     };
   }
 
+  // LED (SNDC-0D4P10WW, Shelly Plus 0-10V Dimmer): 24V DC controller, no AC power metering.
   if (!ledStatus) {
     console.error('Poll: could not reach LED Shelly');
   } else {
-    const ledOn    = ledStatus['light:0']?.output ? 1 : 0;
-    const ledPower = ledStatus['light:0']?.apower ?? null;
-    metrics.push({ name: 'sauna_relay_on',    labels: { device: 'led', channel: '0', name: 'led_strip' }, value: ledOn    });
-    if (ledPower != null) metrics.push({ name: 'sauna_power_watts', labels: { device: 'led', channel: '0', name: 'led_strip' }, value: ledPower });
-    devices.led = { on: ledOn === 1, apower: ledPower };
+    const ledOn = ledStatus['light:0']?.output ? 1 : 0;
+    metrics.push({ name: 'sauna_relay_on', labels: { device: 'led', channel: '0', name: 'led_strip' }, value: ledOn });
+    devices.led = { on: ledOn === 1 };
   }
 
   // Evaluate session — only writes state KV when something changed.
@@ -112,10 +111,10 @@ export async function pollAndSync(env) {
   metrics.push({ name: 'sauna_session_active',    labels: { device: 'primary' }, value: sessionActive ? 1 : 0 });
   metrics.push({ name: 'sauna_remaining_seconds', labels: { device: 'primary' }, value: remainingS            });
   metrics.push({ name: 'sauna_sessions_total',    labels: {},                    value: sessionCount          });
-  // Heater is a 6kW resistive element — full power whenever relay is on, zero otherwise.
-  // Use relayOn (direct hardware state), not sessionActive (temperature-confirmed), so
-  // power shows correctly during warmup before the 20-min session confirmation window.
-  metrics.push({ name: 'sauna_power_watts',      labels: { device: 'primary', channel: '0', name: 'heater' }, value: relayOn ? 6000 : 0 });
+  // Heater is a 6kW resistive element. Both contactors must be closed — if either is open
+  // the circuit is broken (safety cutoff or fault), so power is zero.
+  const heaterOn = relayOn && safetyRelayOn;
+  metrics.push({ name: 'sauna_power_watts', labels: { device: 'primary', channel: '0', name: 'heater' }, value: heaterOn ? 6000 : 0 });
   metrics.push({ name: 'sauna_energy_kwh_total', labels: {}, value: sessionState?.energyKwhTotal ?? 0 });
   metrics.push({ name: 'sauna_energy_kwh_month', labels: {}, value: sessionState?.energyKwhMonth ?? 0 });
 

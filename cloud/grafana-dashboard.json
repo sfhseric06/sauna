@@ -279,10 +279,9 @@
       "gridPos": { "x": 0, "y": 14, "w": 16, "h": 8 },
       "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
       "targets": [
-        { "refId": "A", "expr": "sauna_power_watts{device=\"primary\", name=\"heater\"}", "legendFormat": "Heater"            },
+        { "refId": "A", "expr": "sauna_power_watts{device=\"primary\", name=\"heater\"}", "legendFormat": "Heater (inferred)"  },
         { "refId": "B", "expr": "sauna_power_watts{device=\"hvac\"}",                    "legendFormat": "HVAC Ch{{channel}}" },
-        { "refId": "C", "expr": "sauna_power_watts{device=\"led\"}",                     "legendFormat": "LED Strip"          },
-        { "refId": "D", "expr": "sauna_power_watts{device=\"exterior\"}",                "legendFormat": "Exterior Light"     }
+        { "refId": "C", "expr": "sauna_power_watts{device=\"exterior\"}",                "legendFormat": "Exterior Light"     }
       ],
       "fieldConfig": {
         "defaults": {
