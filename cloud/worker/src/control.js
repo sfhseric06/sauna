@@ -163,6 +163,35 @@ function fAge(ms) {
   return `${Math.round(s / 3600)}h ago`;
 }
 
+// ─── Leaderboard rendering ─────────────────────────────────────────────────────
+
+function renderLeaderboard(leaderboard, currentSessionPeak) {
+  const entries = leaderboard?.entries ?? [];
+  if (entries.length === 0 && currentSessionPeak == null) {
+    return `<p style="color:var(--muted);font-size:.85rem;text-align:center;margin:12px 0">No sessions recorded yet</p>`;
+  }
+
+  // Show top 10, highlighting current session if it would appear
+  const rows = entries.slice(0, 10).map((e, i) => {
+    const medal = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `${i + 1}.`;
+    return `<tr>
+      <td style="padding:5px 8px;color:var(--muted);font-size:.8rem">${medal}</td>
+      <td style="padding:5px 8px;font-size:.85rem">Session #${e.session}</td>
+      <td style="padding:5px 8px;font-size:.85rem;color:var(--muted)">${e.date}</td>
+      <td style="padding:5px 8px;font-size:.9rem;font-weight:600;color:var(--orange);text-align:right">${e.peakTempF}°F</td>
+    </tr>`;
+  }).join('');
+
+  const currentRow = currentSessionPeak != null ? `
+    <tr style="border-top:1px solid #333;opacity:.7">
+      <td style="padding:5px 8px;color:var(--muted);font-size:.8rem">now</td>
+      <td style="padding:5px 8px;font-size:.85rem" colspan="2">Current session</td>
+      <td style="padding:5px 8px;font-size:.9rem;font-weight:600;color:var(--orange);text-align:right">${currentSessionPeak}°F</td>
+    </tr>` : '';
+
+  return `<table style="width:100%;border-collapse:collapse">${rows}${currentRow}</table>`;
+}
+
 // ─── Chart rendering ───────────────────────────────────────────────────────────
 
 function renderChart(entries) {
@@ -258,18 +287,24 @@ function renderChart(entries) {
 }
 
 async function controlPage(env) {
-  const [devRaw, stateRaw, histRaw] = await Promise.all([
-    env.SAUNA_KV.get('devices'),
+  const [snapRaw, stateRaw, lbRaw] = await Promise.all([
+    env.SAUNA_KV.get('snap'),
     env.SAUNA_KV.get('state'),
-    env.SAUNA_KV.get('history'),
+    env.SAUNA_KV.get('leaderboard'),
   ]);
 
-  const dev     = devRaw   ? JSON.parse(devRaw)   : null;
-  const state   = stateRaw ? JSON.parse(stateRaw) : null;
-  const history = histRaw  ? JSON.parse(histRaw)  : null;
+  const snap        = snapRaw  ? JSON.parse(snapRaw)  : null;
+  const dev         = snap?.devices  ?? null;
+  const history     = snap?.history  ?? null;
+  const state       = stateRaw ? JSON.parse(stateRaw) : null;
+  const leaderboard = lbRaw    ? JSON.parse(lbRaw)    : null;
 
-  const saunaOn     = state?.sessionActive ?? dev?.primary?.on  ?? false;
-  const remainingS  = computeRemainingS(state);
+  const relayOn     = dev?.primary?.on       ?? false;
+  const confirmed   = state?.sessionActive   ?? false;
+  const warmingUp   = relayOn && !confirmed;
+  const saunaOn     = confirmed || relayOn;   // on if relay is on, regardless of session confirmation
+  // Show relay-based remaining when warming up (from webhook), confirmed remaining when session active
+  const remainingS  = confirmed ? computeRemainingS(state) : (warmingUp ? (state?.remainingS ?? 0) : 0);
   const sessionNum  = state?.sessionCount  ?? null;
   const heaterPower = dev?.primary?.apower ?? null;
 
@@ -286,7 +321,11 @@ async function controlPage(env) {
 
   // Sauna sub-info line
   let saunaInfo = '';
-  if (saunaOn) {
+  if (warmingUp) {
+    const mins = fMins(remainingS);
+    saunaInfo = `warming up${mins ? ` &middot; ${mins} left on relay` : ''}`;
+    if (indoorTemp != null) saunaInfo += ` &middot; ${Math.round(indoorTemp)}&deg;F`;
+  } else if (confirmed) {
     const mins = fMins(remainingS);
     saunaInfo = mins ? `${mins} remaining` : 'session active';
     if (heaterPower) saunaInfo += ` &middot; ${Math.round(heaterPower)}W`;
@@ -527,6 +566,15 @@ async function controlPage(env) {
         </button>
       </div>
     </div>
+  </div>
+
+  <!-- Peak temperature leaderboard -->
+  <div class="card" style="margin-bottom:12px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+      <span style="font-weight:600;font-size:.9rem">Peak Temp Leaderboard</span>
+      <span style="font-size:.68rem;color:var(--muted)">${leaderboard?.entries?.length ? `${leaderboard.entries.length} sessions` : 'building...'}</span>
+    </div>
+    ${renderLeaderboard(leaderboard, state?.sessionPeakTempF != null ? Math.round(state.sessionPeakTempF * 10) / 10 : null)}
   </div>
 
   <div class="footer">
