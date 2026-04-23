@@ -133,8 +133,8 @@ export async function evaluateSession(env, relayOn, indoorTempF) {
         sessionPeakTempF = indoorTempF;
       }
     }
-  } else {
-    // Relay off or cooled down — end session and reset warmup
+  } else if (!relayOn) {
+    // Relay is definitively OFF — end session and clear warmup state.
     if (sessionActive) {
       const sessionKwh = await recordSession(env, sessionCount, sessionPeakTempF, sessionStart, now);
       energyKwhTotal  += sessionKwh;
@@ -146,6 +146,23 @@ export async function evaluateSession(env, relayOn, indoorTempF) {
     }
     sessionHotSince  = null;
     sessionPeakTempF = null;
+  } else if (indoorTempF !== null) {
+    // Relay is ON but temperature is confirmed below threshold — genuinely cooled down.
+    if (sessionActive) {
+      const sessionKwh = await recordSession(env, sessionCount, sessionPeakTempF, sessionStart, now);
+      energyKwhTotal  += sessionKwh;
+      energyKwhMonth   = Math.round((energyKwhMonth + sessionKwh) * 10) / 10;
+      sessionEndedAt   = now;
+      sessionActive    = false;
+      sessionStart     = null;
+      console.log(`Session: ended (cooled) — peak ${sessionPeakTempF}°F, ${sessionKwh} kWh, total ${energyKwhTotal} kWh`);
+    }
+    sessionHotSince  = null;
+    sessionPeakTempF = null;
+  } else {
+    // Relay is ON but temperature sensor is offline (indoorTempF = null).
+    // Hold current warmup/session state — don't reset the timer just because HVAC is unreachable.
+    console.log(`Session: HVAC sensor offline, holding state (relayOn=${relayOn}, sessionHotSince=${sessionHotSince})`);
   }
 
   const next = {

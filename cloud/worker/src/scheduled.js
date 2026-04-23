@@ -98,8 +98,10 @@ export async function pollAndSync(env) {
   }
 
   // Evaluate session — only writes state KV when something changed.
+  // Only requires primary (relay state). HVAC offline → indoorTempF null → handled
+  // in evaluateSession by holding current state rather than resetting warmup timer.
   let sessionState = null;
-  if (primaryStatus && hvacStatus) {
+  if (primaryStatus) {
     const result = await evaluateSession(env, relayOn, indoorTempF);
     sessionState = result.state;
   }
